@@ -82,19 +82,27 @@ class MainWindow(QWidget):
         vbox.addLayout(hbox)
         self.setLayout(vbox)
 
-    def number_click(self):
+    def number_click(self, *key):
         """
         Функция для обработки сигналов нажатия на кнопки с цифрами.
         """
-        sender_name = self.sender().text()
-        self.number += sender_name
-        self.lcd.display(self.number)
+        if key in locals():
+            sender_name = self.sender().text()
+            self.number += sender_name
+            self.lcd.display(self.number)
+        else:
+            self.number += key[0]
+            self.lcd.display(self.number)
 
-    def operation_click(self):
+    def operation_click(self, *key):
         """
         Функция для обработки сигналов нажатия на кнопки с действиями.
         """
-        sender_name = self.sender().text()
+        sender_name = ""
+        if key not in locals():
+            sender_name = self.sender().text()
+        else:
+            sender_name = key[0]
         if sender_name != '=':
             self.expression += sender_name
             self.prev_number += self.number
@@ -106,13 +114,52 @@ class MainWindow(QWidget):
                 result = int(self.prev_number) + int(self.number)
             elif self.expression == '-':
                 result = int(self.prev_number) - int(self.number)
+            elif self.expression == '*':
+                result = int(self.prev_number) * int(self.number)
+            elif self.expression == '/':
+                result = int(self.prev_number) / int(self.number)
+            self.prev_number = ''
+            self.number = ''
+            self.expression = ''
+            self.lcd.display(result)
 
     def keyPressEvent(self, event):
         """
         Функция обработчик нажатия клавиши.
         """
-        if event.key() == Qt.Key_Escape:
+        key = event.key()
+        if key == Qt.Key_Escape:
             app.closeAllWindows()
+        elif key == Qt.Key_0:
+            self.number_click("0")
+        elif key == Qt.Key_1:
+            self.number_click("1")
+        elif key == Qt.Key_2:
+            self.number_click("2")
+        elif key == Qt.Key_3:
+            self.number_click("3")
+        elif key == Qt.Key_4:
+            self.number_click("4")
+        elif key == Qt.Key_5:
+            self.number_click("5")
+        elif key == Qt.Key_6:
+            self.number_click("6")
+        elif key == Qt.Key_7:
+            self.number_click("7")
+        elif key == Qt.Key_8:
+            self.number_click("8")
+        elif key == Qt.Key_9:
+            self.number_click("9")
+        elif key == Qt.Key_Equal:
+            self.operation_click("=")
+        elif key == Qt.Key_Equal:
+            self.operation_click("+")
+        elif key == Qt.Key_Plus:
+            self.operation_click("-")
+        elif key == Qt.Key_multiply:
+            self.operation_click("*")
+        elif key == Qt.Key_division:
+            self.operation_click("/")
 
 
 app = QApplication(sys.argv)
